@@ -1,0 +1,145 @@
+@font-face {
+	font-family: Digital-7;
+	src: url('Digital-7.TTF');
+}
+
+body {
+	background: none !important;
+}
+
+#container {
+	position: absolute;
+}
+
+#bombTimer {
+	position: relative;
+	left: 875px;
+	top: 378px;
+	color: red;
+	font-family: Digital-7;
+	user-select: none;
+}
+
+#bombText {
+	position: relative;
+	left: 1000px;
+	top: 323px;
+	color: red;
+	font-family: Digital-7;
+	user-select: none;
+}
+
+#bomb {
+	position: absolute;
+	left: 500px;
+	width: 900px;
+	height: 900px;
+}
+
+#starButton {
+	position: relative;
+	left: 863px;
+	top: 493px;
+	padding: 19px 18px;
+	border: none;
+	background-color: transparent;
+}
+
+#zeroButton {
+	position: relative;
+	left: 875px;
+	top: 493px;
+	padding: 19px 18px;
+	border: none;
+	background-color: transparent;
+}
+
+#hashButton {
+	position: relative;
+	left: 885px;
+	top: 493px;
+	padding: 19px 18px;
+	border: none;
+	background-color: transparent;
+}
+
+#oneButton {
+	position: relative;
+	left: 745px;
+	top: 442px;
+	padding: 19px 18px;
+	border: none;
+	background-color: transparent;
+}
+
+#twoButton {
+	position: relative;
+	left: 755px;
+	top: 442px;
+	padding: 19px 18px;
+	border: none;
+	background-color: transparent;
+}
+
+#threeButton {
+	position: relative;
+	left: 765px;
+	top: 442px;
+	padding: 19px 18px;
+	border: none;
+	background-color: transparent;
+}
+
+#fourButton {
+	position: relative;
+	left: 625px;
+	top: 387px;
+	padding: 19px 18px;
+	border: none;
+	background-color: transparent;
+}
+
+#fiveButton {
+	position: relative;
+	left: 635px;
+	top: 387px;
+	padding: 19px 18px;
+	border: none;
+	background-color: transparent;
+}
+
+#sixButton {
+	position: relative;
+	left: 646px;
+	top: 387px;
+	padding: 19px 18px;
+	border: none;
+	background-color: transparent;
+}
+
+#sevenButton {
+	position: relative;
+	left: 505px;
+	top: 333px;
+	padding: 19px 18px;
+	border: none;
+	background-color: transparent;
+}
+
+#eightButton {
+	position: relative;
+	left: 515px;
+	top: 333px;
+	padding: 19px 18px;
+	border: none;
+	background-color: transparent;
+}
+
+#nineButton {
+	position: relative;
+	left: 526px;
+	top: 333px;
+	padding: 19px 18px;
+	border: none;
+	background-color: transparent;
+}
