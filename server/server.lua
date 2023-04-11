@@ -1,5 +1,5 @@
 RegisterNetEvent("countDown")
-AddEventHandler("countDown", function(timeToActivate, size, bomb)
+AddEventHandler("countDown", function(timeToActivate, bomb)
     Citizen.CreateThread(function()
         local time = timeToActivate -- 10 seconds
         while (time ~= 0) do -- Whist we have time to wait
@@ -9,12 +9,12 @@ AddEventHandler("countDown", function(timeToActivate, size, bomb)
             print(time)
         end
 
-        TriggerClientEvent("blowUpBomb", -1, bomb, size)
+        TriggerClientEvent("blowUpBomb", -1, bomb)
     end)
 end)
 
 
 RegisterNetEvent("placeBomb")
-AddEventHandler("placeBomb", function(coords, timeToActivate, size, ped)
-    TriggerClientEvent("placeBombClient", -1, coords, timeToActivate, size, ped)
+AddEventHandler("placeBomb", function(coords, timeToActivate, ped)
+    TriggerClientEvent("placeBombClient", -1, coords, timeToActivate, ped)
 end)

@@ -1,40 +1,27 @@
---[[
-## Beta ## 
-
-Command to activate bomb
-
-/timebomb time_to_activate size
-
-## Release ##
-
-NUI to set time and size
-
-]]
-
 local display = false
+local bombCoords = nil
+local ped = nil
 
 
-RegisterCommand("timebomb", function(source, args)
-    local timeToActivate = args[1]
-    local size = args[2]
-    local ped = GetPlayerPed(source)
-
-    local bombCoords = GetEntityCoords(ped)
-
-    -- Animation 
-    local dict = "weapons@projectile@sticky_bomb"
-    loadAnimDict(dict)
-    TaskPlayAnim(PlayerPedId(), dict, "plant_floor", 8.0, 1.0, -1, 0, 1)
+RegisterCommand("timebomb", function(source)
+    ped = GetPlayerPed(source)
+    bombCoords = GetEntityCoords(ped)
 
     SetDisplay(true)
-
-    TriggerServerEvent("placeBomb", bombCoords, timeToActivate, size, ped)
 
 end, false)
 
 
+function clientBombFirst(time)
+    local dict = "weapons@projectile@sticky_bomb"
+    loadAnimDict(dict)
+    TaskPlayAnim(PlayerPedId(), dict, "plant_floor", 8.0, 1.0, -1, 0, 1)
+
+    TriggerServerEvent("placeBomb", bombCoords, time, ped)  
+end
+
 RegisterNetEvent("placeBombClient")
-AddEventHandler("placeBombClient", function(coords, timeToActivate, size, ped)
+AddEventHandler("placeBombClient", function(coords, timeToActivate, ped)
     local bombProp = config.bombModel
     local bombCoords = coords
 
@@ -54,14 +41,14 @@ AddEventHandler("placeBombClient", function(coords, timeToActivate, size, ped)
     bomb = CreateObject(bombProp, bonePos.x, bonePos.y, bonePos.z, true, false, false)
     PlaceObjectOnGroundProperly(bomb)
 
-    TriggerServerEvent("countDown", timeToActivate, size, bomb)
+    TriggerServerEvent("countDown", timeToActivate, bomb)
 
     Citizen.CreateThread(function()
         local time = timeToActivate
 
         while (time ~= 0) do 
             
-            PlaySoundFromEntity(-1, "5_SEC_WARNING", bomb, "HUD_MINI_GAME_SOUNDSET", true, 0)
+            PlaySoundFromEntity(-1, "5_SEC_WARNING", bomb, "HUD_MINI_GAME_SOUNDSET", false, 0)
             Wait(1000)
             time = time - 1
 
@@ -70,10 +57,9 @@ AddEventHandler("placeBombClient", function(coords, timeToActivate, size, ped)
 
 end)
 
--- AUDIO_ITEM_STICKYBOMB
 
 RegisterNetEvent("blowUpBomb")
-AddEventHandler("blowUpBomb", function(bomb, size)
+AddEventHandler("blowUpBomb", function(bomb)
     local bombCoords = GetEntityCoords(bomb)
 
     AddExplosion(
@@ -84,7 +70,7 @@ AddEventHandler("blowUpBomb", function(bomb, size)
         150000.0,
         true,
         false,
-        size
+        0.4
     )
 
     DeleteEntity(bomb)
@@ -106,6 +92,22 @@ function SetDisplay(bool)
     })
 end
 
+RegisterNUICallback("buttonPress", function(data)
+    PlaySoundFromEntity(-1, "5_SEC_WARNING", ped, "HUD_MINI_GAME_SOUNDSET", true, 0)
+end)
+
+RegisterNUICallback("exit", function(data)
+    local time = nil
+
+    SetDisplay(false)
+    if data.text ~= "none" and data.text ~= "escape" then 
+        time2 = string.gsub(data.text, ":", "")
+        TriggerEvent("chat:addMessage", {
+            args = {"^2[Time Bomb]^1 Bomb placed. It will detonate in "..tonumber(time2).." seconds."}
+        })
+        clientBombFirst(time2) 
+    end
+end)
 
 Citizen.CreateThread(function()
     while display do
