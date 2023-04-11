@@ -1,1 +1,1 @@
-TriggerEvent('chat:addSuggestion', '/timebomb', 'Create a timed bomb')
+TriggerEvent('chat:addSuggestion', '/timebomb', 'Create a timed bomb', {})
