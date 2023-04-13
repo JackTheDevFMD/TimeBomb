@@ -17,7 +17,7 @@ function clientBombFirst(time)
     loadAnimDict(dict)
     TaskPlayAnim(PlayerPedId(), dict, "plant_floor", 8.0, 1.0, -1, 0, 1)
 
-    TriggerServerEvent("placeBomb", bombCoords, time, ped)  
+    TriggerServerEvent("TimeBomb:placeBomb", bombCoords, time, ped)  
 end
 
 RegisterNetEvent("placeBombClient")
@@ -41,7 +41,7 @@ AddEventHandler("placeBombClient", function(coords, timeToActivate, ped)
     bomb = CreateObject(bombProp, bonePos.x, bonePos.y, bonePos.z, true, false, false)
     PlaceObjectOnGroundProperly(bomb)
 
-    TriggerServerEvent("countDown", timeToActivate, bomb)
+    TriggerServerEvent("TimeBomb:countDown", timeToActivate, bomb)
 
     Citizen.CreateThread(function()
         local time = timeToActivate

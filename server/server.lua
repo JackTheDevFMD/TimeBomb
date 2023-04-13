@@ -1,12 +1,16 @@
-RegisterNetEvent("countDown")
-AddEventHandler("countDown", function(timeToActivate, bomb)
+AddEventHandler('onResourceStart', function(resourceName)
+    if (GetCurrentResourceName() ~= config.resourceName ) then
+        print("\n\n\n^8TIMEBOMB SCRIPT ERROR ^3\n\nPLEASE ENSURE THE NAME OF THE RESOURCE MATCHES THE NAME IN THE CONFIG.LUA^7\n\n\n")
+    end
+end)
+
+RegisterNetEvent("TimeBomb:countDown")
+AddEventHandler("TimeBomb:countDown", function(timeToActivate, bomb)
     Citizen.CreateThread(function()
-        local time = timeToActivate -- 10 seconds
-        while (time ~= 0) do -- Whist we have time to wait
-            Wait( 1000 ) -- Wait a second
+        local time = timeToActivate
+        while (time ~= 0) do
+            Wait(1000)
             time = time - 1
-            -- 1 Second should have past by now
-            print(time)
         end
 
         TriggerClientEvent("blowUpBomb", -1, bomb)
@@ -14,7 +18,7 @@ AddEventHandler("countDown", function(timeToActivate, bomb)
 end)
 
 
-RegisterNetEvent("placeBomb")
-AddEventHandler("placeBomb", function(coords, timeToActivate, ped)
+RegisterNetEvent("TimeBomb:placeBomb")
+AddEventHandler("TimeBomb:placeBomb", function(coords, timeToActivate, ped)
     TriggerClientEvent("placeBombClient", -1, coords, timeToActivate, ped)
 end)
