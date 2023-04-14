@@ -1,9 +1,13 @@
 local display = false
 local bombCoords = nil
 local ped = nil
+local bomb = nil
 
 
 RegisterCommand("timebomb", function(source)
+
+    -- Command to start the bomb placement.
+
     ped = GetPlayerPed(source)
     bombCoords = GetEntityCoords(ped)
 
@@ -13,15 +17,22 @@ end, false)
 
 
 function clientBombFirst(time)
-    local dict = "weapons@projectile@sticky_bomb"
+
+    -- Completes the animation for placing the bomb.
+    -- This is only run for the person that ran the command.
+    local dict = config.animationDictionary
+
     loadAnimDict(dict)
-    TaskPlayAnim(PlayerPedId(), dict, "plant_floor", 8.0, 1.0, -1, 0, 1)
+    TaskPlayAnim(PlayerPedId(), dict, config.animationName, 8.0, 1.0, -1, 0, 1)
 
     TriggerServerEvent("TimeBomb:placeBomb", bombCoords, time, ped)  
 end
 
 RegisterNetEvent("placeBombClient")
 AddEventHandler("placeBombClient", function(coords, timeToActivate, ped)
+
+    -- Places the bomb for the clients
+
     local bombProp = config.bombModel
     local bombCoords = coords
 
@@ -43,23 +54,14 @@ AddEventHandler("placeBombClient", function(coords, timeToActivate, ped)
 
     TriggerServerEvent("TimeBomb:countDown", timeToActivate, bomb)
 
-    Citizen.CreateThread(function()
-        local time = timeToActivate
-
-        while (time ~= 0) do 
-            
-            PlaySoundFromEntity(-1, "5_SEC_WARNING", bomb, "HUD_MINI_GAME_SOUNDSET", false, 0)
-            Wait(1000)
-            time = time - 1
-
-        end
-    end)
-
 end)
 
 
 RegisterNetEvent("blowUpBomb")
-AddEventHandler("blowUpBomb", function(bomb)
+AddEventHandler("blowUpBomb", function()
+
+    -- Blows up the bomb
+
     local bombCoords = GetEntityCoords(bomb)
 
     AddExplosion(
@@ -76,7 +78,25 @@ AddEventHandler("blowUpBomb", function(bomb)
     DeleteEntity(bomb)
 end)
 
+
+RegisterNetEvent("bombTick")
+AddEventHandler("bombTick", function(playerId)
+
+    -- Checks the location of the player and the bomb
+    -- If they are close to each other the sound will start. Otherwise it wont.
+
+    local bombCoords = GetEntityCoords(bomb)
+    local playerCoords = GetEntityCoords(GetPlayerPed(playerId))
+
+    if Vdist2(playerCoords, bombCoords) < 2*config.soundDistance then 
+        PlaySoundFromEntity(-1, "5_SEC_WARNING", ped, "HUD_MINI_GAME_SOUNDSET", true, 0)
+    end
+end)
+
 function loadAnimDict(dict)
+
+    -- Loads the animation requested. 
+
 	RequestAnimDict(dict)
 	while not HasAnimDictLoaded(dict) do
 		Citizen.Wait(1)
@@ -84,6 +104,8 @@ function loadAnimDict(dict)
 end
 
 function SetDisplay(bool)
+
+    -- Sets the display of the NUI to the boolean value passed.
     display = bool
     SetNuiFocus(bool, bool)
     SendNUIMessage({
@@ -93,10 +115,16 @@ function SetDisplay(bool)
 end
 
 RegisterNUICallback("buttonPress", function(data)
+
+    -- Registeres the button press of the NUI and plays a sound.
+
     PlaySoundFromEntity(-1, "5_SEC_WARNING", ped, "HUD_MINI_GAME_SOUNDSET", true, 0)
 end)
 
 RegisterNUICallback("exit", function(data)
+
+    -- Exits the NUI and deturmins whether a bomb has been planted or not.
+
     local time = nil
 
     SetDisplay(false)
@@ -109,6 +137,9 @@ RegisterNUICallback("exit", function(data)
     end
 end)
 
+
+-- A thread that contains whether the NUI is displayed, if so the user can not 
+-- do those controls.
 Citizen.CreateThread(function()
     while display do
         Citizen.Wait(0)
