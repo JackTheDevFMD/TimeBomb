@@ -6,7 +6,7 @@ config.resourceName = "TimeBomb"
 -- Sound distance
 
 config.soundDistance = 10
-
+config.defuseDistance = 6
 
 -- Don't change unless you know what you are doing.
 

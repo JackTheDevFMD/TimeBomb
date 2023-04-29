@@ -4,6 +4,7 @@ games { 'gta5' }
 
 client_scripts {
     'client/client.lua',
+    'client/funcs.lua',
     'client/chatsuggestions.lua'
 }
 

@@ -12,9 +12,12 @@ AddEventHandler("TimeBomb:countDown", function(timeToActivate)
 
     -- Sets a countdown timer for the bomb to go off.
 
+    TriggerClientEvent("displayTimeLeft", -1, timeToActivate)
+
     Citizen.CreateThread(function()
         local time = timeToActivate
         while (time ~= 0) do
+            TriggerClientEvent("displayTimeLeftNumber", -1, time)
             Wait(1000)
             time = time - 1
         end
@@ -23,6 +26,9 @@ AddEventHandler("TimeBomb:countDown", function(timeToActivate)
     end)
 end)
 
+RegisterNetEvent("TimeBomb:countdownDisplay")
+AddEventHandler("TimeBomb:countdownDisplay", function(time)
+end)
 
 RegisterNetEvent("TimeBomb:placeBomb")
 AddEventHandler("TimeBomb:placeBomb", function(coords, timeToActivate, ped)

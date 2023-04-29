@@ -2,13 +2,14 @@ local display = false
 local bombCoords = nil
 local ped = nil
 local bomb = nil
+local defusalTime = 0
 
 
 RegisterCommand("timebomb", function(source)
 
     -- Command to start the bomb placement.
 
-    ped = GetPlayerPed(source)
+    ped = PlayerPedId()
     bombCoords = GetEntityCoords(ped)
 
     SetDisplay(true)
@@ -93,26 +94,43 @@ AddEventHandler("bombTick", function(playerId)
     end
 end)
 
-function loadAnimDict(dict)
 
-    -- Loads the animation requested. 
 
-	RequestAnimDict(dict)
-	while not HasAnimDictLoaded(dict) do
-		Citizen.Wait(1)
-	end
-end
+-- Defusale 
 
-function SetDisplay(bool)
+-- Hovering numbers countdown
 
-    -- Sets the display of the NUI to the boolean value passed.
-    display = bool
-    SetNuiFocus(bool, bool)
-    SendNUIMessage({
-        type = "ui",
-        status = bool,
-    })
-end
+RegisterNetEvent("displayTimeLeftNumber")
+AddEventHandler("displayTimeLeftNumber", function(time)
+    defusalTime = time
+end)
+
+RegisterNetEvent("displayTimeLeft")
+AddEventHandler("displayTimeLeft", function(startNumber)
+
+    -- Doesn't display to the other people :(
+        
+    defusalTime = 0
+
+    Citizen.CreateThread(function()
+        while true do 
+            Citizen.Wait(0)
+            if bomb ~= nil then 
+                local bombCoords = GetEntityCoords(bomb)
+                local playerCoords = GetEntityCoords(GetPlayerPed(playerId))
+
+                if Vdist2(playerCoords, bombCoords) < config.defuseDistance then 
+                    Draw3DText(bombCoords.x, bombCoords.y, bombCoords.z+0.5, 0.5, tostring(defusalTime))
+                end
+            end
+        end
+    end)
+end)
+
+
+
+
+-- ## NUI ## -- 
 
 RegisterNUICallback("buttonPress", function(data)
 
